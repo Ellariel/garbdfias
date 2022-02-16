@@ -572,7 +572,7 @@ cleanup(hadobj)
 # In[140]:
 
 
-[x for x in chains if '1578' in x]
+#[x for x in chains if '1578' in x]
 
 
 # In[202]:
@@ -645,13 +645,13 @@ for i in range(10, 0, -1):
 lst = df.apply(get_town, axis=1)
 df['street'] = [x[0] for x in lst]
 df['tow'] = [x[1] for x in lst]
-df['left'] = [x[2] for x in lst]
+df['leftover'] = [x[2] for x in lst]
 df['mun'] = [x[3][0] if len(x[3]) > 0 else np.nan for x in lst]
 df['levchain'] = df['levchain'].apply(lambda x: tuple(x.split('-')))
 #df.head()
 dfch = dfch.merge(df[['levchain', 'street', 'tow', 'left', 'mun']], on='levchain')
 dfch['id_reg'] = region
-cleanup(df)
+
 
 dfch['id_tow'] = dfch.apply(lambda x: x[f'{x["tow"]}'] if pd.notna(x["tow"]) else np.nan, axis=1)
 dfch['id_mun'] = dfch.apply(lambda x: x[f'{x["mun"]}'] if pd.notna(x["mun"]) else np.nan, axis=1)
@@ -660,6 +660,8 @@ dfch.rename(columns={'1': 'l1', '2': 'l2', '3': 'l3', '4': 'l4', '5': 'l5',
                      '6': 'l6', '7': 'l7', '8': 'l8', '9': 'l9', '10': 'l10'}, inplace=True)
 
 #dfch.head()
+cleanup(df)
+cleanup(dat)
 dfch.to_csv(os.path.join(final_dir, f'{region}_parsed_chains.csv'), index=False)
 
 
