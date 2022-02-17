@@ -1,0 +1,3 @@
+﻿create_table:
+  hadobj: 'housenum TEXT, housenum1 TEXT, housenum2 TEXT, housetype TEXT, housetype1 TEXT, housetype2 TEXT, isactive INT, isactual INT, "level" INT, levelname TEXT, name TEXT, name1 TEXT, name2 TEXT, objectguid TEXT, objectid INT, typelongname TEXT, typelongname1 TEXT, typelongname2 TEXT, typename TEXT, typename1 TEXT, typename2 TEXT, KLADR TEXT, OKTMO TEXT'
+  parsed_chains: 'chain TEXT, levchain TEXT, "l10" INT, "l9" INT, "l8" INT, "l7" INT, "l6" INT, "l5" INT, "l4" INT, "l3" INT, "l2" INT, "l1" INT, id_tow INT, tow INT, mun INT, id_mun INT, id_reg INT, "leftover" TEXT, street INT'
