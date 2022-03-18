@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
 # Install Dependencies
 """
 #pip install numpy==1.21.4
@@ -30,16 +27,8 @@ region = args[2]
 region_dir = os.path.join(data_dir, region)
 final_dir = args[3]
 
-#data_dir = './'
-#region = '01'
-#region_dir = os.path.join(data_dir, region)
-#final_dir = os.path.join(data_dir, 'result')
-
 os.makedirs(final_dir, exist_ok=True)
 print(data_dir, region_dir, final_dir)
-
-
-# In[12]:
 
 
 def parse_xml(x):
@@ -67,9 +56,6 @@ def get_adms(df):
         by='OBJECTID'
     )['PARENTOBJID'].apply(list).to_dict()
     return rftree
-
-
-# In[55]:
 
 
 #ADDR_OBJ
@@ -124,10 +110,6 @@ adobj = adobj.merge(
 cleanup(lev)
 #adobj.head()
 
-
-# In[78]:
-
-
 #OKTMO
 fname = glob.glob(os.path.join(region_dir, 'AS_ADDR_OBJ_PARAMS_*.XML'))
 fname = fname[0]
@@ -177,12 +159,11 @@ adobjp = adobjp[adobjp['TYPEID'] == '7'][['OBJECTID', 'VALUE']].rename(
 #cladr
 
 #print(adobj)
-adobj = adobj.set_index('OBJECTID') .join(pd.DataFrame.from_dict(adobjp, orient='index')) .join(pd.DataFrame.from_dict(cladr, orient='index')) .reset_index()
+adobj = adobj.set_index('OBJECTID') \
+.join(pd.DataFrame.from_dict(adobjp, orient='index')) \
+.join(pd.DataFrame.from_dict(cladr, orient='index')) \
+.reset_index()
 #print(adobj)
-
-
-# In[79]:
-
 
 #READ HOUSES
 fname = glob.glob(os.path.join(region_dir, 'AS_HOUSES_*.XML'))
@@ -206,6 +187,7 @@ if 'ISACTUAL' in hous.columns:
 else:
     hous = hous[(hous['ISACTIVE'] == '1')]
 #hous.head()
+
 fname = glob.glob(os.path.join(data_dir, 'AS_HOUSE_TYPES_*.XML'))
 if len(fname) != 1:
     msg = f'Please check file count for region {region_dir} there are {len(fname)} files'
@@ -283,9 +265,6 @@ cleanup(housta)
 #hous.head()
 
 
-# In[80]:
-
-
 hous['LEVEL'] = '10'
 hous['LEVELNAME'] = 'Здание/Сооружение'
 hous['NAME'] = hous[['TYPELONGNAME', 'HOUSENUM']].apply(
@@ -321,9 +300,6 @@ hous['NAME2'] = hous[['TYPELONGNAME2', 'HOUSENUM2']].apply(
     axis=1
 )
 #hous.head()
-
-
-# In[81]:
 
 
 fname = glob.glob(os.path.join(region_dir, 'AS_HOUSES_PARAMS_*.XML'))
@@ -365,12 +341,12 @@ hp = hp[hp['TYPEID'] == '7'][['OBJECTID', 'VALUE']].rename(
 ).to_dict('index')
 #hp
 
-#print(hous)
-hous = hous.set_index('OBJECTID') .join(pd.DataFrame.from_dict(hp, orient='index')) .join(pd.DataFrame.from_dict(cladr_h, orient='index')) .reset_index()
-#print(hous)
 
-
-# In[91]:
+hous = hous.set_index('OBJECTID') \
+.join(pd.DataFrame.from_dict(hp, orient='index')) \
+.join(pd.DataFrame.from_dict(cladr_h, orient='index')) \
+.reset_index()
+#print(hous)
 
 
 hadobj = pd.concat(
@@ -403,13 +379,7 @@ hadobj['KLADR'] = hadobj['KLADR'].apply(lambda x: x[0] if isinstance(x, list) el
 hadobj.drop(['ISACTUAL', 'ISACTIVE'], axis=1).to_csv(os.path.join(final_dir, f'{region}_hadobj.csv'), index=False)
 
 
-# In[ ]:
-
-
 #####CHAINS
-
-
-# In[92]:
 
 
 def reduce_included(x):
@@ -430,30 +400,6 @@ def reduce_included(x):
         single = True
     return ret, single
 
-'''
-def get_town(x):
-    """
-    Chain post-cleanup.
-    """
-    priority = ['5', '6', '4', '7', '1']
-    street = [f'{i}' for i in range(8, 0, -1)]
-    streets = [p for p in street if x[p] == 1]
-    if len(streets) == 0:
-        street = None
-    else:
-        street = streets[0]
-    town = [p for p in priority if p != street and x[p] == 1]
-    town = town[0] if len(town) > 0 else None
-    leftover = [
-        x for x in streets
-        if x != street
-        and x != town
-        and x not in ['1', '2', '3']
-    ]
-    muni = [x for x in streets if x in ['2', '3']]
-
-    return street, town, leftover, muni
-'''
 
 def get_adms(df):
     """
@@ -490,10 +436,7 @@ def get_adms_rec_rev(chain, rdadm, housdict, objdict):
     else:
         return chain
 
-
-# In[122]:
-
-
+    
 fname = glob.glob(os.path.join(region_dir, 'AS_MUN_HIERARCHY_*.XML'))
 if len(fname) != 1:
     msg = f'Please check file count for region {region_dir} there are {len(fname)} files'
@@ -519,15 +462,6 @@ adm0 = adm[adm['ISACTIVE'] == '1'][cols].merge(
 cleanup(adm)
 
 
-# In[123]:
-
-
-#adm0[adm0['OBJECTID'] == '1578']
-
-
-# In[135]:
-
-
 chready = 'PATH' in adm.columns
 cols = ['OBJECTID', 'PARENTOBJID'] + (['PATH'] if chready else [])
 adm0 = adm[adm['ISACTIVE'] == '1'][cols].merge(
@@ -535,15 +469,6 @@ adm0 = adm[adm['ISACTIVE'] == '1'][cols].merge(
     on='OBJECTID'
 )
 print(f'chready: {chready}')
-
-
-# In[136]:
-
-
-#adm0[adm0['OBJECTID'] == '1578']
-
-
-# In[138]:
 
 
 if chready:
@@ -574,16 +499,6 @@ if not chready:
 cleanup(hadobj)
 #[(k, v) for k, v in hadobjd.items()][:2]
 
-
-# In[140]:
-
-
-#[x for x in chains if '1578' in x]
-
-
-# In[202]:
-
-
 dfch = pd.DataFrame()
 if not chready:
     odd_chains = [
@@ -602,9 +517,6 @@ if not chready:
 dfch['chain'] = list(set(chains))
 cleanup(chains)
 #dfch.head()
-
-
-# In[203]:
 
 
 dfch['levchain'] = [
@@ -626,11 +538,6 @@ for i in range(10, 0, -1):
         for d in dat
     ]
 #dfch.head()
-
-
-# In[204]:
-
-
 
 def get_town(x):
     """
@@ -656,12 +563,6 @@ def get_town(x):
     return street, town, mun, leftover
 
 
-
-
-
-# In[205]:
-
-
 chl = list(set(dfch['levchain'].apply(lambda x: '-'.join(x))))
 df = pd.DataFrame()
 df['levchain'] = chl
@@ -671,13 +572,6 @@ for i in range(10, 0, -1):
 #df.head()
 lst = df.apply(get_town, axis=1)
 
-'''
-df['street'] = [x[0] for x in lst]
-df['tow'] = [x[1] for x in lst]
-df['leftover'] = [x[2] for x in lst]
-df['mun'] = [x[3][0] if len(x[3]) > 0 else np.nan for x in lst]
-df['levchain'] = df['levchain'].apply(lambda x: tuple(x.split('-')))
-'''
 df['street'] = [x[0] for x in lst]
 df['tow'] = [x[1] for x in lst]
 df['mun'] = [x[2] for x in lst]

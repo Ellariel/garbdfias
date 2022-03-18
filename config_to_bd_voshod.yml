@@ -1,0 +1,9 @@
+connection_from:
+  database_from: 'temp_inid'
+  user_from: 'temp_inid'
+  password_from: ''
+  host_from: 'rc1b.mdb.yandexcloud.net'
+  port_from: '6432'
+  ssl_mode_from: 'require'
+  sslrootcert_from: ''
+  shema_from: 'gar_source'
